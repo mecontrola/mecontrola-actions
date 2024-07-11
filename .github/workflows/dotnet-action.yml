@@ -1,7 +1,7 @@
 name: DotNet C# Build
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       dotnet-version:
         description: 'The DotNet version to build.'

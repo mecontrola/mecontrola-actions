@@ -1,11 +1,10 @@
 name: DotNet C# Load Dependencies
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       GITHUB_TOKEN:
         description: 'The GitHub token'
-        type: string
         required: true
       dotnet-version:
         description: 'The DotNet version to build.'
