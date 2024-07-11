@@ -1,6 +1,4 @@
 name: DotNet C# Load Dependencies
-description: Load dependency repository to perform the build
-author: Rafael Almeida de Oliveira
 
 on:
   workflow_call:
