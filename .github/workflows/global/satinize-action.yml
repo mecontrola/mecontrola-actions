@@ -1,0 +1,25 @@
+name: Satinize Artifacts
+description: A GitHub Action to run a task that removes the oldest artifacts from the repository.
+author: Rafael Almeida de Oliveira
+
+on:
+  workflow_call:
+    inputs:
+      GITHUB_TOKEN:
+        description: 'The GitHub token'
+        type: string
+        required: true
+      expire-in:
+        description: 'Expiration time for artifacts'
+        type: string
+        required: true
+        default: '30days'
+        
+jobs:
+  delete-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kolpav/purge-artifacts-action@v1
+        with:
+          token: ${{ inputs.GITHUB_TOKEN }}
+          expire-in: ${{ inputs.expire-in }}

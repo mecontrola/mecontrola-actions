@@ -1,0 +1,37 @@
+name: DotNet C# Build
+description: A GitHub Action to run a task that removes the oldest artifacts from the repository.
+author: Rafael Almeida de Oliveira
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        description: 'The DotNet version to build.'
+        type: string
+        required: true
+      build-configuration:
+        description: 'The configuration to build use.'
+        type: string
+        required: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout branch ${{ GITHUB_ACTION_REPOSITORY }}
+      uses: actions/checkout@v4.1.7
+    
+    - name: Setup .NET ${{ inputs.dotnet-version }}
+      uses: actions/setup-dotnet@v4.0.1
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Restore Dependencies
+      run: dotnet restore --nologo --verbosity=minimal --force
+
+    - name: Build Solution
+      run: dotnet build --nologo --verbosity=minimal --no-restore --configuration ${{ inputs.build-configuration }}
+
+    - name: Test Solution
+      run: dotnet test --nologo --verbosity=minimal --no-restore --no-build --configuration ${{ inputs.build-configuration }}

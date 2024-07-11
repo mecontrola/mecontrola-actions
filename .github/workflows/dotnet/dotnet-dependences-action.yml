@@ -1,0 +1,49 @@
+name: DotNet C# Load Dependencies
+description: Load dependency repository to perform the build
+author: Rafael Almeida de Oliveira
+
+on:
+  workflow_call:
+    inputs:
+      GITHUB_TOKEN:
+        description: 'The GitHub token'
+        type: string
+        required: true
+      dotnet-version:
+        description: 'The DotNet version to build.'
+        type: string
+        required: true
+      build-configuration:
+        description: 'The configuration used by Build.'
+        type: string
+        required: true
+
+env:
+  REPOSITORY_NAME: mecontrola-packages
+  REPOSITORY_PATH: mecontrola/mecontrola-packages
+  SOLUTION_NAME: MeControla.sln
+  SOLUTION_PATH: MeControla
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout branch ${{ env.REPOSITORY_NAME }}
+      uses: actions/checkout@v4.1.7
+      with:
+        token: ${{ inputs.GITHUB_TOKEN }}
+        repository: ${{ env.REPOSITORY_PATH }}
+        path: ./${{ env.SOLUTION_PATH }}
+
+    - name: Move files from ${{ env.REPOSITORY_NAME }} to parent directory
+      run: |
+        mv ${{ github.workspace }}/${{ env.SOLUTION_PATH }} ${{ github.workspace }}/../${{ env.SOLUTION_PATH }}
+    
+    - name: Setup .NET ${{ inputs.dotnet-version }}
+      uses: actions/setup-dotnet@v4.0.1
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Restore ${{ env.REPOSITORY_NAME }} Project
+      run: dotnet restore ${{ github.workspace }}/../${{ env.SOLUTION_PATH }}/${{ env.SOLUTION_NAME }} --nologo --verbosity=minimal --force
